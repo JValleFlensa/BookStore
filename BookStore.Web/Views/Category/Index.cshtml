@@ -1,14 +1,21 @@
 ﻿@model IEnumerable<Category>
 @{
     ViewData["Title"] = "Index";
+    
 }
+
+
+
 <div class="container mt-4 mb-4">
     <div class="row">
         <div class="col-6">
             <h2>Category Index</h2>
         </div>
         <div class="col-6 text-end">
-            <a class="btn btn-primary" asp-asp-controller="Category" asp-action="Create">Crear Categoria</a>
+            <a class="btn btn-primary" asp-asp-controller="Category" asp-action="Create">
+                <i class="bi bi-plus-square"></i>
+                Crear Categoria
+            </a>
         </div>
     </div>
 </div>
@@ -20,6 +27,8 @@
         <tr>
             <th>Nombre</th>
             <th>Order de Visualización</th>
+            <th>Editar</th>
+            <th>Eliminar</th>
         </tr>
     </thead>
     <tbody>
@@ -29,7 +38,14 @@
                 <td style="width: 50%">@category.Name</td>
                 <td style="width: 10%">@category.DisplayOrder</td>
                 <td style="width: 10%">
-                    <a class="btn btn-info" asp-asp-controller="Category" asp-action="Edit" asp-route-id="@category.Id">Editar</a>
+                    <a class="btn btn-warning" asp-asp-controller="Category" asp-action="Edit" asp-route-id="@category.Id">
+                        <i class="bi bi-pencil"></i>Editar
+                    </a>
+                </td>
+                <td style="width: 10%">
+                    <a class="btn btn-danger" asp-asp-controller="Category" asp-action="Delete" asp-route-id="@category.Id">
+                        <i class="bi bi-trash"></i>Eliminar
+                    </a>
                 </td>
             </tr>
         }

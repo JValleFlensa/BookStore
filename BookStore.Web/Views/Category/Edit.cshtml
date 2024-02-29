@@ -15,10 +15,10 @@
         </div>
         <div class="mb-3">
             <label asp-for="DisplayOrder"></label>
-            <input asp-for="DisplayOrder" class="form-control" />
+            <input asp-for="DisplayOrder" class="form-control" max="100" min="1"/>
             <span class="text-danger" asp-validation-for="DisplayOrder"></span>
         </div>
-        <button class="btn btn-primary" style="width: 100px" type="submit">Actualizar Categoria</button>
+        <button class="btn btn-info" style="width: 200px" type="submit">Actualizar Categoria</button>
         <a class="btn btn-secondary" asp-asp-controller="Category" asp-action="Index" style="width: 100px">Cancelar</a>
     </div>
 </form>
