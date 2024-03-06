@@ -8,16 +8,21 @@ namespace BookStore.DataAccess.Repositories
 
         public ICategoryRepository Category { get; private set; }
         public ICoverTypeRepository CoverType { get; private set; }
-        public UnitOfWork(ApplicationDbContext context, ICategoryRepository categoryRepository, ICoverTypeRepository coverTypeRepository)
+        public IProductRepository Product { get; private set; }
+        public UnitOfWork(ApplicationDbContext context, 
+            ICategoryRepository categoryRepository, 
+            ICoverTypeRepository coverTypeRepository, 
+            IProductRepository product)
         {
-            this._context = context;
-            this.Category = categoryRepository;
-            this.CoverType = coverTypeRepository;
+            _context = context;
+            Category = categoryRepository;
+            CoverType = coverTypeRepository;
+            Product = product;
         }
 
         public void Save()
         {
-            this._context.SaveChanges();
+            _context.SaveChanges();
         }
     }
 }

@@ -4,8 +4,9 @@ using BookStore.DataAccess.IRepositories;
 using BookStore.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace BookStore.Web.Controllers
+namespace BookStore.Web.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -17,7 +18,7 @@ namespace BookStore.Web.Controllers
         {
             //_context = context;
             //_categoryRepository = new CategoryRepository(context);
-            this._unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
