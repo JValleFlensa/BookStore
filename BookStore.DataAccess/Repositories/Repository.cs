@@ -1,4 +1,5 @@
 ﻿using BookStore.DataAccess.IRepositories;
+using BookStore.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -20,16 +21,30 @@ namespace BookStore.DataAccess.Repositories
             this._dbSet.Add(entity);
         }
 
-        public IEnumerable<TEntity> GetAll()
+        public IEnumerable<TEntity> GetAll(string? includeProperties = null)
         {
-            IEnumerable<TEntity> query = this._dbSet;
+            IQueryable<TEntity> query = this._dbSet;
+            if (includeProperties != null)
+            {
+                foreach (var property in includeProperties.Split(new[] { ',' }))
+                {
+                    query = query.Include(property);
+                }
+            }
             return query.ToList();
         }
 
-        public TEntity? GetFirstOrDefault(Expression<Func<TEntity, bool>> filter)
+        public TEntity? GetFirstOrDefault(Expression<Func<TEntity, bool>> filter, string? includeProperties = null)
         {
             IQueryable<TEntity> query = this._dbSet;
             query.Where(filter);
+            if (includeProperties != null)
+            {
+                foreach (var property in includeProperties.Split(new[] { ',' }))
+                {
+                    query = query.Include(property);
+                }
+            }
             return query.FirstOrDefault();
         }
 

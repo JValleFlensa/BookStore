@@ -1,7 +1,6 @@
 ﻿using BookStore.DataAccess.IRepositories;
 using BookStore.Models;
 using BookStore.Models.ViewModels;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -65,7 +64,13 @@ namespace BookStore.Web.Areas.Admin.Controllers
             }
             else 
             {
-                return View();
+                Product product = _unitOfWork.Product.GetFirstOrDefault(x => x.Id == productId)!;
+                if (product != null)
+                { 
+                    productViewModel.Product = product;
+                    return View(productViewModel);
+                }
+                return NotFound();
             }
         }
         
@@ -81,46 +86,75 @@ namespace BookStore.Web.Areas.Admin.Controllers
                     var uploadFilesPath = Path.Combine(webRootPath, @"images\products");
                     var extension = Path.GetExtension(file.FileName);
 
+                    if (productViewModel.Product.ImageURL != null)
+                    {
+                        var oldImagePath = Path.Combine(webRootPath, productViewModel.Product.ImageURL.TrimStart('\\'));
+                        if (System.IO.File.Exists(oldImagePath))
+                        {
+                            System.IO.File.Delete(oldImagePath);
+                        }
+                    }
                     using (var fileStream = new FileStream(Path.Combine(uploadFilesPath, fileName + extension), FileMode.Create))
                     {
                         file.CopyTo(fileStream);
                         productViewModel.Product.ImageURL = @"images\products\" + fileName + extension;
                     }
                 }
-                _unitOfWork.Product.Add(productViewModel.Product);
+
+                if (productViewModel.Product.Id != 0)
+                {
+                    _unitOfWork.Product.Update(productViewModel.Product);
+                    TempData["success"] = "Producto actualizado exitosamente!!!";
+                }
+                else 
+                {
+                    _unitOfWork.Product.Add(productViewModel.Product);
+                    TempData["success"] = "Producto agregado exitosamente!!!";
+                }
                 _unitOfWork.Save();
-                TempData["success"] = "Producto agregado exitosamente!!!";
                 return RedirectToAction(nameof(Index));
             }
             return View(productViewModel);
-        }
-
-        public IActionResult Delete(int id)
-        {
-            return View();
-        }
-
-
-        [HttpPost, ActionName("Delete")]
-        public IActionResult DeletePost(int id)
-        {
-            return NotFound();
-        }
-
-        [HttpPost]
-        public IActionResult Create(CoverType coverType)
-        {
-            return View();
         }
 
         #region API CALLS
         [HttpGet]
         public IActionResult GetAll()
         {
-            var productList = _unitOfWork.Product.GetAll();
+            var productList = _unitOfWork.Product.GetAll("Category,CoverType");
             return Json(new 
             {
                 data = productList
+            });
+        }
+
+        [HttpDelete]
+        public IActionResult Delete(int? id)
+        {
+            var webRootPath = this.webHostEnviroment.WebRootPath;
+            Product productFromDB = _unitOfWork.Product.GetFirstOrDefault(x => x.Id == id)!;
+            if (productFromDB != null) 
+            {
+                if (productFromDB.ImageURL != null)
+                {
+                    var oldImagePath = Path.Combine(webRootPath, productFromDB.ImageURL.TrimStart('\\'));
+                    if (System.IO.File.Exists(oldImagePath))
+                    {
+                        System.IO.File.Delete(oldImagePath);
+                    }
+                }
+                _unitOfWork.Product.Remove(productFromDB);
+                _unitOfWork.Save();
+                return Json(new
+                {
+                    sucess = true,
+                    message = "Producto eliminado correctamente"
+                });
+            }
+            return Json(new 
+            {
+                sucess = false, 
+                message = "Ocurrió un error al eliminar"
             });
         }
         #endregion

@@ -24,10 +24,10 @@ namespace BookStore.DataAccess.Repositories
                 productFromDb.ListPrice = product.ListPrice;
                 productFromDb.Price50 = product.Price50;
                 productFromDb.Price100 = product.Price100;
-                productFromDb.ImageURL = product.ImageURL != null ? productFromDb.ImageURL : product.ImageURL;
+                productFromDb.ImageURL = product.ImageURL != null ? product.ImageURL : productFromDb.ImageURL;
                 productFromDb.CategoryId = product.CategoryId;
                 productFromDb.CoverTypeId = product.CoverTypeId;
-                this._context.Update(product);
+                this._context.Update(productFromDb);
             }           
         }
     }
